@@ -1,6 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <vector>
 #include <iostream>
@@ -141,7 +143,9 @@ int main(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-	window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
+	int sizeWidth = 640;
+	int sizeHeight = 480;
+	window = glfwCreateWindow(sizeWidth, sizeHeight, "Simple example", NULL, NULL);
 
 	if (!window)
 	{
@@ -184,7 +188,7 @@ int main(void)
 
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, triangle.size() * sizeof(glm::vec3)*3, triangle.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, triangle.size() * sizeof(glm::vec3) * 3, triangle.data(), GL_STATIC_DRAW);
 
 	// Bindings
 	//position
@@ -202,14 +206,34 @@ int main(void)
 
 	glPointSize(20.f);
 
-	int uniformScale = glGetUniformLocation(program, "scale");
+	int uniformTransform = glGetUniformLocation(program, "transform");
+	int uniformView = glGetUniformLocation(program, "view");
+	int uniformProjection = glGetUniformLocation(program, "projection");
 
 	int count = 0;
 	while (!glfwWindowShouldClose(window))
 	{
 		count++;
 
-		glProgramUniform1f(program,uniformScale, 0.05f * float(count%100)/100);
+		float s = (0.05f * float(count % 100) / 100);
+
+		glm::mat4 transform = glm::mat4(1);
+		glm::mat4 view = glm::mat4(1);
+		glm::mat4 projection = glm::mat4(1);
+
+		transform = glm::scale(transform, glm::vec3(0.03,0.03,0.03));
+
+		//transform = glm::translate(transform, glm::vec3(count * 0.1, 0, 0));
+
+		//transform = glm::rotate(transform, glm::radians(1.0f * count), glm::vec3(0,1,0) );
+
+		projection = glm::perspective(glm::radians(90.0f), (float)sizeWidth / (float)sizeHeight , 0.0f, 1000.0f);
+		
+		view = glm::lookAt( glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f) );
+
+		glUniformMatrix4fv(uniformTransform,1,false, glm::value_ptr(transform));
+		glUniformMatrix4fv(uniformView, 1, false, glm::value_ptr(view));
+		glUniformMatrix4fv(uniformProjection, 1, false, glm::value_ptr(projection));
 
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
@@ -217,13 +241,14 @@ int main(void)
 		glViewport(0, 0, width, height);
 
 		glClear(GL_COLOR_BUFFER_BIT);
-		// glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+		//glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
 
-		glDrawArrays(GL_TRIANGLES, 0, triangle.size()*3 );
+		glDrawArrays(GL_TRIANGLES, 0, triangle.size() * 3 );
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	exit(EXIT_SUCCESS);

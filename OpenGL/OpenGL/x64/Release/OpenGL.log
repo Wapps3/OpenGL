@@ -1,0 +1,4 @@
+﻿  main.cpp
+D:\M2\SyntheseImage\OpenGL\Ressource\main.cpp(222): warning C4267: 'argument' : conversion de 'size_t' en 'GLsizei', perte possible de données
+main.obj : error LNK2005: "class std::vector<struct Triangle,class std::allocator<struct Triangle> > __cdecl ReadStl(char const *)" (?ReadStl@@YA?AV?$vector@UTriangle@@V?$allocator@UTriangle@@@std@@@std@@PEBD@Z) déjà défini(e) dans main.obj
+D:\M2\SyntheseImage\OpenGL\OpenGL\x64\Release\OpenGL.exe : fatal error LNK1169: un ou plusieurs symboles définis à différentes reprises ont été rencontrés

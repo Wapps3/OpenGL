@@ -36,4 +36,15 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="logo.stl">
+      <Filter>Fichiers de ressources</Filter>
+    </None>
+    <None Include="shader.frag">
+      <Filter>Fichiers sources</Filter>
+    </None>
+    <None Include="shader.vert">
+      <Filter>Fichiers sources</Filter>
+    </None>
+  </ItemGroup>
 </Project>

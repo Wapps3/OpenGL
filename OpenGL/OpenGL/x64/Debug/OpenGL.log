@@ -1,3 +1,4 @@
 ﻿  main.cpp
 D:\M2\SyntheseImage\OpenGL\Ressource\main.cpp(246): warning C4267: 'argument' : conversion de 'size_t' en 'GLsizei', perte possible de données
+D:\M2\SyntheseImage\OpenGL\Ressource\main.cpp(257): warning C4267: 'argument' : conversion de 'size_t' en 'GLsizei', perte possible de données
   OpenGL.vcxproj -> D:\M2\SyntheseImage\OpenGL\OpenGL\x64\Debug\OpenGL.exe

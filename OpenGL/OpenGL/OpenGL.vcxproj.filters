@@ -35,6 +35,9 @@
     <ClInclude Include="..\..\Ressource\texture.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Ressource\OBJ_Loader.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="logo.stl">

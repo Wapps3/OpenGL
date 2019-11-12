@@ -18,19 +18,17 @@ std::vector<Triangle> ReadStl(const char * filename)
 
 		for(unsigned i = 0; i < triCount; ++i)
 		{
-			glm::vec3 p0, p1, p2;
+			glm::vec3 normal, p0, p1, p2;
 
-			// skip normal
-			file.seekg(3 * 4, std::ios_base::cur);
-
+			file.read((char*) &normal, sizeof(glm::vec3));
 			file.read((char*) &p0, sizeof(glm::vec3));
 			file.read((char*) &p1, sizeof(glm::vec3));
 			file.read((char*) &p2, sizeof(glm::vec3));
 
 			// skip attribute
 			file.seekg(2, std::ios_base::cur);
-
-			tris.push_back({p0, p1, p2});
+			
+			tris.push_back({p0, normal, p1, normal, p2, normal});
 		}
 
 		return tris;

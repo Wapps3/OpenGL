@@ -1,22 +1,3 @@
 ﻿  main.cpp
-D:\M2\SyntheseImage\OpenGL\Ressource\main.cpp(246): warning C4267: 'argument' : conversion de 'size_t' en 'GLsizei', perte possible de données
-D:\M2\SyntheseImage\OpenGL\Ressource\main.cpp(257): warning C4267: 'argument' : conversion de 'size_t' en 'GLsizei', perte possible de données
-  texture.cpp
-D:\M2\SyntheseImage\OpenGL\Ressource\CImg\include\CImg.h(16235): warning C4319: '~' : zéro étendant 'unsigned int' vers 'double' d'une taille supérieure
-  D:\M2\SyntheseImage\OpenGL\Ressource\CImg\include\CImg.h(14788): note: pendant la compilation de la fonction membre '<Inconnu>' (classe <Inconnu>)
-  D:\M2\SyntheseImage\OpenGL\Ressource\CImg\include\CImg.h(14666): note: voir la référence à l'instanciation de la fonction modèle 'unsigned int cimg_library::CImg<float>::_cimg_math_parser::compile(char *,char *,const unsigned int,unsigned int *const )' en cours de compilation
-  D:\M2\SyntheseImage\OpenGL\Ressource\CImg\include\CImg.h(23042): note: voir la référence à l'instanciation de classe modèle 'cimg_library::CImg<float>::_cimg_math_parser' en cours de compilation
-  D:\M2\SyntheseImage\OpenGL\Ressource\CImg\include\CImg.h(23031): note: pendant la compilation de la fonction membre '<Inconnu>' (classe <Inconnu>)
-  D:\M2\SyntheseImage\OpenGL\Ressource\CImg\include\CImg.h(23026): note: voir la référence à l'instanciation de la fonction modèle 'double cimg_library::CImg<float>::_eval(cimg_library::CImg<float> *const ,const char *const ,const double,const double,const double,const double,const cimg_library::CImgList<T> *const ,cimg_library::CImgList<T> *const ) const' en cours de compilation
-          with
-          [
-              T=float
-          ]
-  D:\M2\SyntheseImage\OpenGL\Ressource\CImg\include\CImg.h(34727): note: voir la référence à l'instanciation de classe modèle 'cimg_library::CImg<float>' en cours de compilation
-  D:\M2\SyntheseImage\OpenGL\Ressource\CImg\include\CImg.h(20960): note: voir la référence à l'instanciation de classe modèle 'cimg_library::CImg<double>' en cours de compilation
-  D:\M2\SyntheseImage\OpenGL\Ressource\CImg\include\CImg.h(52474): note: voir la référence à l'instanciation de classe modèle 'cimg_library::CImg<T>' en cours de compilation
-D:\M2\SyntheseImage\OpenGL\Ressource\CImg\include\CImg.h(19231): warning C4319: '~' : zéro étendant 'unsigned int' vers 'double' d'une taille supérieure
-  D:\M2\SyntheseImage\OpenGL\Ressource\CImg\include\CImg.h(19229): note: pendant la compilation de la fonction membre '<Inconnu>' (classe <Inconnu>)
-  D:\M2\SyntheseImage\OpenGL\Ressource\CImg\include\CImg.h(16234): note: voir la référence à l'instanciation de la fonction modèle 'double cimg_library::CImg<float>::_cimg_math_parser::mp_bitwise_not(cimg_library::CImg<float>::_cimg_math_parser &)' en cours de compilation
-  Génération de code en cours...
+D:\M2\SyntheseImage\OpenGL\Ressource\main.cpp(276): warning C4267: 'argument' : conversion de 'size_t' en 'GLsizei', perte possible de données
   OpenGL.vcxproj -> D:\M2\SyntheseImage\OpenGL\OpenGL\x64\Debug\OpenGL.exe

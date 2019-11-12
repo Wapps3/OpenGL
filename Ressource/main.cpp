@@ -15,6 +15,9 @@
 
 #define TINYPLY_IMPLEMENTATION
 #include <tinyply.h>
+#include "texture.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 static void error_callback(int /*error*/, const char* description)
 {
@@ -165,12 +168,13 @@ int main(void)
 
 	// Callbacks
 	glDebugMessageCallback(opengl_error_callback, nullptr);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
 	const size_t nParticules = 1000;
 	const auto particules = MakeParticules(nParticules);
 
 	//charge triangle
-	const auto triangle = ReadStl("arthas.stl");
+	const auto triangle = ReadStl("arthas.stl","pikachu.jpg");
 
 	// Shader
 	const auto vertex = MakeShader(GL_VERTEX_SHADER, "shader.vert");
@@ -195,27 +199,42 @@ int main(void)
 
 	//position
 	auto index = glGetAttribLocation(program, "position");
-
-	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3) * 2, nullptr);
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3) * 2 + sizeof(glm::vec2), nullptr);
 	glEnableVertexAttribArray(index);
 
 	//normal
 	index = glGetAttribLocation(program, "normal");
-
-	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3) * 2, (void*) sizeof(glm::vec3));
+	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3) * 2 + sizeof(glm::vec2), (void*) sizeof(glm::vec3));
 	glEnableVertexAttribArray(index);
 
+	//uv
+	index = glGetAttribLocation(program, "uv");
+	glVertexAttribPointer(index, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec3) * 2 + sizeof(glm::vec2), (void*)(sizeof(glm::vec3)*2) );
+	glEnableVertexAttribArray(index);
+	
+	int width, height, nbrchanel;
+	unsigned char* img = stbi_load("pikachu.jpg", &width, &height, &nbrchanel, 0);
 
-	glPointSize(20.f);
+	GLuint texture;
+	glCreateTextures(GL_TEXTURE_2D,1,&texture);
+	glTextureStorage2D(texture,1, GL_RGB8,width,height);
+	glTextureSubImage2D(texture,0,0,0,width,height, GL_RGB, GL_UNSIGNED_BYTE, img );
 
 	int uniformTransform = glGetUniformLocation(program, "transform");
 	int uniformView = glGetUniformLocation(program, "view");
 	int uniformProjection = glGetUniformLocation(program, "projection");
+	int uniformTexture = glGetUniformLocation(program, "texture_");
+
+	glBindTextureUnit(0, texture);
+	glUniform1i(uniformTexture,0);
+	//glActiveTexture(0);
+
 
 	int count = 0;
 	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(window))
 	{
+		glClearColor(0.2f,0.2f,0.2f,1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		count++;
@@ -229,7 +248,7 @@ int main(void)
 	
 		transform = glm::scale(transform, glm::vec3(0.03,0.03,0.03));
 		transform = glm::translate(transform, glm::vec3(dist, 0, 0));
-		transform = glm::rotate(transform, glm::radians(angle + 20 ), glm::vec3(0,0,1) );
+		//transform = glm::rotate(transform, glm::radians(angle + 20 ), glm::vec3(0,0,1) );
 
 		glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)sizeWidth / (float)sizeHeight , 0.1f, 1000.0f);
 		glm::mat4 view = glm::lookAt( glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f) );
@@ -243,11 +262,11 @@ int main(void)
 
 		glViewport(0, 0, width, height);
 
-		glDrawArrays(GL_TRIANGLES, 0, triangle.size() * 3 );
+		//glDrawArrays(GL_TRIANGLES, 0, triangle.size() * 3 );
 
 		transform = glm::mat4(1);
-		transform = glm::scale(transform, glm::vec3(0.03, 0.03, 0.03));
-		transform = glm::translate(transform, glm::vec3(-dist * angle/50.0f, 0, 0));
+		transform = glm::scale(transform, glm::vec3(0.1, 0.1, 0.1));
+		//transform = glm::translate(transform, glm::vec3(-dist * angle/50.0f, 0, 0));
 		transform = glm::rotate(transform, glm::radians( 200.0f), glm::vec3(0, 0, 1));
 
 		glUniformMatrix4fv(uniformTransform, 1, false, glm::value_ptr(transform));
@@ -258,6 +277,8 @@ int main(void)
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+
+		
 	}
 
 	glfwDestroyWindow(window);

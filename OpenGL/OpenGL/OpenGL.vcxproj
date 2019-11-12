@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Ressource\OBJ_Loader.h" />
+    <ClInclude Include="..\..\Ressource\stb_image.h" />
     <ClInclude Include="..\..\Ressource\stl.h" />
     <ClInclude Include="..\..\Ressource\texture.h" />
   </ItemGroup>

@@ -150,6 +150,8 @@
     <None Include="logo.stl" />
     <None Include="shader.frag" />
     <None Include="shader.vert" />
+    <None Include="shaderTexture.frag" />
+    <None Include="shaderTexture.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

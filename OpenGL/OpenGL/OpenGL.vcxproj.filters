@@ -58,5 +58,11 @@
     <None Include="shader.vert">
       <Filter>Fichiers sources</Filter>
     </None>
+    <None Include="shaderTexture.frag">
+      <Filter>Fichiers sources</Filter>
+    </None>
+    <None Include="shaderTexture.vert">
+      <Filter>Fichiers sources</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -21,6 +21,52 @@
 
 void debugFramebuffer(GLuint fbo);
 
+void debugFramebuffer(GLuint fbo)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	GLenum test = (glCheckFramebufferStatus(GL_FRAMEBUFFER));
+
+	switch (glCheckFramebufferStatus(GL_FRAMEBUFFER))
+	{
+	case GL_FRAMEBUFFER_COMPLETE:
+		std::cout << ("Framebuffer is complete") << std::endl;
+		break;
+
+	case GL_FRAMEBUFFER_UNDEFINED:
+		std::cout << ("Framebuffer doesn't exist") << std::endl;
+		break;
+
+	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+		std::cout << ("Framebuffer contains at least one attachement that is incomplete") << std::endl;
+		break;
+
+	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+		std::cout << ("Framebuffer has no attached Textures") << std::endl;
+		break;
+
+	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+		std::cout << ("Framebuffer draw target is incomplete") << std::endl;
+		break;
+
+	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+		std::cout << ("Framebuffer read target is incomplete") << std::endl;
+		break;
+
+	default:
+		std::cout << ("Framebuffer is unsupported") << std::endl;
+		break;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	if (test != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "Press any key to Continue..." << std::endl;
+		std::cin.get();
+	}
+}
+
 static void error_callback(int /*error*/, const char* description)
 {
 	std::cerr << "Error: " << description << std::endl;
@@ -176,39 +222,34 @@ int main(void)
 	//charge triangle
 	//const auto triangle = ReadStl("arthas.stl","pikachu.jpg");
 	const auto triangle = ReadObj("vaisseau.obj");
+
 	// Shader
 	const auto vertex = MakeShader(GL_VERTEX_SHADER, "shader.vert");
 	const auto fragment = MakeShader(GL_FRAGMENT_SHADER, "shader.frag");
-
 	const auto program = AttachAndLink({vertex, fragment});
 
 	// Buffers
 	GLuint vbo, vao;
 	glGenBuffers(1, &vbo);
 	glGenVertexArrays(1, &vao);
-
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	glBufferData(GL_ARRAY_BUFFER, triangle.size() * sizeof(Triangle), triangle.data(), GL_STATIC_DRAW);
-
 	// Bindings
-
 	//position
 	auto index = glGetAttribLocation(program, "position");
 	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3) * 2 + sizeof(glm::vec2), nullptr);
 	glEnableVertexAttribArray(index);
-
 	//normal
 	index = glGetAttribLocation(program, "normal");
 	glVertexAttribPointer(index, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3) * 2 + sizeof(glm::vec2), (void*) sizeof(glm::vec3));
 	glEnableVertexAttribArray(index);
-
 	//uv
 	index = glGetAttribLocation(program, "uv");
 	glVertexAttribPointer(index, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec3) * 2 + sizeof(glm::vec2), (void*)(sizeof(glm::vec3)*2) );
 	glEnableVertexAttribArray(index);
-	
+
 	//texture
 	int width, height, nbrchanel;
 		//load image
@@ -218,68 +259,23 @@ int main(void)
 	glTextureStorage2D(texture,1, GL_RGB8,width,height);
 	glTextureSubImage2D(texture,0,0,0,width,height, GL_RGB, GL_UNSIGNED_BYTE, img );
 
-	//Vao main screen
-	GLuint vboQuad, vaoQuad;
-
-	glGenBuffers(1, &vboQuad);
-	glGenVertexArrays(1, &vaoQuad);
-
-	glBindVertexArray(vaoQuad);
-	glBindBuffer(GL_ARRAY_BUFFER, vboQuad);
-
-	struct QuadVertex
-	{
-		glm::vec3 position;
-		glm::vec2 uv;
-	};
-
-	std::vector<QuadVertex> quadMesh;
-
-	//triangle1
-	quadMesh.push_back( { glm::vec3(-1,1,0), glm::vec2(0,1) } ); //vertex0
-	quadMesh.push_back( { glm::vec3(-1,-1,0), glm::vec2(0,0)} ); //vertex1
-	quadMesh.push_back( { glm::vec3(1,-1,0), glm::vec2(1,0) } ); //vertex2
-	//triangle2
-	quadMesh.push_back( { glm::vec3(1,-1,0), glm::vec2(1,0) } ); //vertex2
-	quadMesh.push_back( { glm::vec3(1,1,0), glm::vec2(1,1) } );	//vertex3
-	quadMesh.push_back( { glm::vec3(-1,1,0), glm::vec2(0,1) } ); //vertex0
-
-	glBufferData(GL_ARRAY_BUFFER, quadMesh.size() * sizeof(QuadVertex), quadMesh.data(), GL_STATIC_DRAW);
-	//position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(QuadVertex) , nullptr);
-	glEnableVertexAttribArray(0);
-	//uv
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(QuadVertex) , (void*)sizeof(glm::vec3) );
-	glEnableVertexAttribArray(1);
-	//TextureShader
-	const auto vertexQuad = MakeShader(GL_VERTEX_SHADER, "shaderTexture.vert");
-	const auto fragmentQuad = MakeShader(GL_FRAGMENT_SHADER, "shaderTexture.frag");
-	const auto programTexture = AttachAndLink({ vertexQuad, fragmentQuad });
-
-	int uniformTextureQuad = glGetUniformLocation(programTexture, "texture_");
-
-
-
-
 
 	//texture depth
 	GLuint depthtexture;
 	glCreateTextures(GL_TEXTURE_2D, 1, &depthtexture);
-	glTextureStorage2D(depthtexture, 1, GL_DEPTH_COMPONENT16, sizeWidth, sizeHeight);
+	glTextureStorage2D(depthtexture, 1, GL_DEPTH_COMPONENT16, sizeWidth * 8, sizeHeight * 8);
 
 	//texture color
 	GLuint colortexture;
 	glCreateTextures(GL_TEXTURE_2D, 1, &colortexture);
-	glTextureStorage2D(colortexture, 1, GL_RGBA8, sizeWidth, sizeHeight);
+	glTextureStorage2D(colortexture, 1, GL_RGBA8, sizeWidth * 8, sizeHeight * 8);
 
 	//FrameBuffer
 	GLuint frameBuffer;
 	glCreateFramebuffers(1, &frameBuffer);
 	glNamedFramebufferTexture(frameBuffer, GL_DEPTH_ATTACHMENT, depthtexture, 0);
 	glNamedFramebufferTexture(frameBuffer, GL_COLOR_ATTACHMENT0, colortexture, 0);
-	glNamedFramebufferDrawBuffer(frameBuffer, GL_COLOR_ATTACHMENT0);
-	//glNamedFramebufferDrawBuffers(frameBuffer, 1, GL_NONE);
-
+	//glNamedFramebufferDrawBuffer(frameBuffer, GL_COLOR_ATTACHMENT0);
 	
 	debugFramebuffer(frameBuffer);
 
@@ -287,8 +283,6 @@ int main(void)
 	int uniformView = glGetUniformLocation(program, "view");
 	int uniformProjection = glGetUniformLocation(program, "projection");
 	int uniformTexture = glGetUniformLocation(program, "texture_");
-
-
 
 	int count = 0;
 	glEnable(GL_DEPTH_TEST);
@@ -299,15 +293,15 @@ int main(void)
 		//Allow rescale the window
 		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
-		glViewport(0, 0, width, height);
-
+		
 		//Active framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER,frameBuffer);
+
 		//clear
-		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+		glClearColor(0.0f, 0.2f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//
-		glViewport(0, 0, sizeWidth, sizeHeight);
+		glViewport(0, 0, sizeWidth*8, sizeHeight*8);
+
 		//bind shader
 		glUseProgram(program);
 		//Bind geometry
@@ -317,7 +311,7 @@ int main(void)
 		glm::mat4 projection = glm::perspective(glm::radians(90.0f), (float)sizeWidth / (float)sizeHeight , 0.1f, 1000.0f);
 		glm::mat4 view = glm::lookAt( glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f) );
 				
-		transform = glm::scale(transform, glm::vec3(0.5, 0.5, 0.5));
+		transform = glm::scale(transform, glm::vec3(0.1, 0.1, 0.1));
 		transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0, 1, 0));
 		transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0, 0, 1));
 		transform = glm::rotate(transform, glm::radians( count*1.0f), glm::vec3(0, 1, 0));
@@ -335,22 +329,29 @@ int main(void)
 
 		//Unbind Buffer
 		glBindFramebuffer(GL_FRAMEBUFFER,0);
-
-		glViewport(0, 0, width, height);
+		
 
 		//clear
-		//*
-		glClearColor(0.0f, 0.2f, 0.0f, 1.0f);
+		glViewport(0, 0, width, height);
+		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glUseProgram(programTexture);
-		glBindVertexArray(vaoQuad);
+		glBindVertexArray(vao);
+	
+		transform = glm::mat4(1);
+		transform = glm::scale(transform, glm::vec3(0.2, 0.2, 0.2));
+		transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0, 1, 0));
+		transform = glm::rotate(transform, glm::radians(90.0f), glm::vec3(0, 0, 1));
+		transform = glm::rotate(transform, glm::radians(count * 0.8f), glm::vec3(0, 1, 0));
+		
+		glUniformMatrix4fv(uniformTransform, 1, false, glm::value_ptr(transform));
+		glUniformMatrix4fv(uniformView, 1, false, glm::value_ptr(view));
+		glUniformMatrix4fv(uniformProjection, 1, false, glm::value_ptr(projection));
+		
+		glBindTextureUnit(0, texture);
+		glUniform1i(uniformTexture,0);
 
-		glBindTextureUnit(0, colortexture);
-		glUniform1i(uniformTextureQuad,0);
-
-		glDrawArrays(GL_TRIANGLES, 0, quadMesh.size() );
-		//*/
+		glDrawArrays(GL_TRIANGLES, 0, triangle.size() * 3);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -362,48 +363,3 @@ int main(void)
 	exit(EXIT_SUCCESS);
 }
 
-void debugFramebuffer(GLuint fbo)
-{
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-	GLenum test = (glCheckFramebufferStatus(GL_FRAMEBUFFER));
-
-	switch (glCheckFramebufferStatus(GL_FRAMEBUFFER))
-	{
-	case GL_FRAMEBUFFER_COMPLETE:
-		std::cout<<("Framebuffer is complete")<<std::endl;
-		break;
-
-	case GL_FRAMEBUFFER_UNDEFINED:
-		std::cout << ("Framebuffer doesn't exist") << std::endl;
-		break;
-
-	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-		std::cout << ("Framebuffer contains at least one attachement that is incomplete") << std::endl;
-		break;
-
-	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-		std::cout << ("Framebuffer has no attached Textures") << std::endl;
-		break;
-
-	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-		std::cout << ("Framebuffer draw target is incomplete") << std::endl;
-		break;
-
-	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-		std::cout << ("Framebuffer read target is incomplete") << std::endl;
-		break;
-
-	default:
-		std::cout << ("Framebuffer is unsupported") << std::endl;
-		break;
-	}
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	if (test != GL_FRAMEBUFFER_COMPLETE)
-	{
-		std::cout << "Press any key to Continue..." << std::endl;
-		std::cin.get();
-	}
-}

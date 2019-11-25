@@ -9,6 +9,6 @@ uniform sampler2D texture_ ;
 
 void main()
 {
-	color = texture(texture_, UV) ;
+	color = texture(texture_, UV) ;//* vec4(normal_Out,1) ;
 	//color = vec4(vec3(color) * normal_Out,1);
 }
